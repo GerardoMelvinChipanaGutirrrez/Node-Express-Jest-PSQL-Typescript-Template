@@ -7,15 +7,17 @@ const connect = async (): Promise<Client> => {
   return client
 }
 
-export const runQuery = async (query: string): Promise<QueryResult<any>> => {
-  const client = await connect()
-  let res: any
+export const runQuery = async (query: string, params: any[] = []): Promise<QueryResult<any>> => {
+  const client = await connect();
   try {
-    res = await client.query(query)
-  } catch (e) {
-    throw e
+    // Ejecuta la consulta con parámetros
+    const result = await client.query(query, params);
+    return result;
+  } catch (error) {
+    console.error('Error ejecutando query:', error.message, { query, params });
+    throw error;
   } finally {
-    await client.end()
+    // Asegura liberar el cliente después de la consulta
+    await client.end();
   }
-  return res
-}
+};
